@@ -122,13 +122,25 @@ DESCRIPTIONS = {
 }
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message:
+        message = update.message
+    elif update.callback_query:
+        message = update.callback_query.message
+    else:
+        return
+
     keyboard = [
         [InlineKeyboardButton("Хорошо, я готов!", callback_data="start")],
         [InlineKeyboardButton("Пройти викторину", callback_data="quiz")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    await update.message.reply_photo(open("img/1.png", "rb"))
-    await update.message.reply_text('Добро пожаловать!🖐️ Перед вами бот, который поможет разобраться в популярных цифровых профессиях. \nВам откроется квиз в "Начале", который вы сможете пройти после просмотра нескольких профессий', reply_markup=reply_markup)
+
+    with open("img/1.png", "rb") as photo:
+        await message.reply_photo(photo)
+    await message.reply_text(
+        'Добро пожаловать!🖐️ Перед вами бот, который поможет разобраться в популярных цифровых профессиях. \nВам откроется квиз в "Начале", который вы сможете пройти после просмотра нескольких профессий',
+        reply_markup=reply_markup
+    )
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
