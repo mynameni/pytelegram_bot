@@ -2,10 +2,9 @@ import logging
 import asyncio
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
+from config import BOT_TOKEN
 
 logging.basicConfig(level=logging.INFO)
-
-TOKEN = '7759084644:AAHJ6fIrM-wVW73ejFKtxTyPWrkN38JjdOI'
 
 PROFESSIONS_DATA = {
     "Медицина": {
@@ -124,12 +123,12 @@ DESCRIPTIONS = {
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     keyboard = [
-        [InlineKeyboardButton("Хорошо, я готов", callback_data="start")],
+        [InlineKeyboardButton("Хорошо, я готов!", callback_data="start")],
         [InlineKeyboardButton("Пройти викторину", callback_data="quiz")]
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
     await update.message.reply_photo(open("img/1.png", "rb"))
-    await update.message.reply_text("Нажмите кнопку ниже, чтобы начать:", reply_markup=reply_markup)
+    await update.message.reply_text('Добро пожаловать!🖐️ Перед вами бот, который поможет разобраться в популярных цифровых профессиях. \nВам откроется квиз в "Начале", который вы сможете пройти после просмотра нескольких профессий', reply_markup=reply_markup)
 
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
@@ -144,7 +143,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         ]
         keyboard.append([InlineKeyboardButton("⬅️ Назад", callback_data="to_main")])
         reply_markup = InlineKeyboardMarkup(keyboard)
-        await query.message.reply_text("Выберите интересующую вас отрасль:", reply_markup=reply_markup)
+        await query.message.reply_text("Выберете интересующую Вас отрасль профессий", reply_markup=reply_markup)
 
     elif data == "to_main":
         await start(update, context)
@@ -160,7 +159,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup = InlineKeyboardMarkup(keyboard)
         await query.message.reply_photo(
             photo=open(IMGG[industry], "rb"),
-            caption="Выберите интересующую вас профессию:",
+            caption="Выберите интересующую Вас профессию",
             reply_markup=reply_markup
         )
 
@@ -185,7 +184,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
-    app = ApplicationBuilder().token(TOKEN).build()
+    app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CallbackQueryHandler(button_handler))
     print("Бот запущен")
